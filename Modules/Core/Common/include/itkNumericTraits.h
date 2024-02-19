@@ -1351,7 +1351,7 @@ public:
   using PrintType = float;
   using AbsType = float;
   using AccumulateType = double;
-  using RealType = double;
+  using RealType = float;
   using ScalarRealType = RealType;
   using FloatType = float;
   using MeasurementVectorType = FixedArray<ValueType, 1>;
