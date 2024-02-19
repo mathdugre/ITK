@@ -73,8 +73,8 @@ public:
   /** InputPixelType type alias support */
   using typename Superclass::InputPixelType;
 
-  /** RealType type alias support */
-  using typename Superclass::RealType;
+  /** FloatType type alias support */
+  using typename Superclass::FloatType;
 
   /** Dimension underlying input image. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
@@ -141,7 +141,7 @@ private:
     const InternalComputationType & distance = index[0] - static_cast<InternalComputationType>(basei[0]);
 
     const TInputImage * const inputImagePtr = this->GetInputImage();
-    const RealType &          val0 = inputImagePtr->GetPixel(basei);
+    const FloatType &          val0 = inputImagePtr->GetPixel(basei);
     if (distance <= 0.)
     {
       return (static_cast<OutputType>(val0));
@@ -152,7 +152,7 @@ private:
     {
       return (static_cast<OutputType>(val0));
     }
-    const RealType & val1 = inputImagePtr->GetPixel(basei);
+    const FloatType & val1 = inputImagePtr->GetPixel(basei);
 
     return (static_cast<OutputType>(val0 + (val1 - val0) * distance));
   }
@@ -177,7 +177,7 @@ private:
     const InternalComputationType & distance1 = index[1] - static_cast<InternalComputationType>(basei[1]);
 
     const TInputImage * const inputImagePtr = this->GetInputImage();
-    const RealType &          val00 = inputImagePtr->GetPixel(basei);
+    const FloatType &          val00 = inputImagePtr->GetPixel(basei);
     if (distance0 <= 0. && distance1 <= 0.)
     {
       return (static_cast<OutputType>(val00));
@@ -189,7 +189,7 @@ private:
       {
         return (static_cast<OutputType>(val00));
       }
-      const RealType & val10 = inputImagePtr->GetPixel(basei);
+      const FloatType & val10 = inputImagePtr->GetPixel(basei);
       return (static_cast<OutputType>(val00 + (val10 - val00) * distance0));
     }
     else if (distance0 <= 0.) // if they have the same "x"
@@ -199,7 +199,7 @@ private:
       {
         return (static_cast<OutputType>(val00));
       }
-      const RealType & val01 = inputImagePtr->GetPixel(basei);
+      const FloatType & val01 = inputImagePtr->GetPixel(basei);
       return (static_cast<OutputType>(val00 + (val01 - val00) * distance1));
     }
     // fall-through case:
@@ -213,23 +213,23 @@ private:
       {
         return (static_cast<OutputType>(val00));
       }
-      const RealType & val01 = inputImagePtr->GetPixel(basei);
+      const FloatType & val01 = inputImagePtr->GetPixel(basei);
       return (static_cast<OutputType>(val00 + (val01 - val00) * distance1));
     }
-    const RealType & val10 = inputImagePtr->GetPixel(basei);
+    const FloatType & val10 = inputImagePtr->GetPixel(basei);
 
-    const RealType & valx0 = val00 + (val10 - val00) * distance0;
+    const FloatType & valx0 = val00 + (val10 - val00) * distance0;
 
     ++basei[1];
     if (basei[1] > this->m_EndIndex[1]) // interpolate across "x"
     {
       return (static_cast<OutputType>(valx0));
     }
-    const RealType & val11 = inputImagePtr->GetPixel(basei);
+    const FloatType & val11 = inputImagePtr->GetPixel(basei);
     --basei[0];
-    const RealType & val01 = inputImagePtr->GetPixel(basei);
+    const FloatType & val01 = inputImagePtr->GetPixel(basei);
 
-    const RealType & valx1 = val01 + (val11 - val01) * distance0;
+    const FloatType & valx1 = val01 + (val11 - val01) * distance0;
 
     return (static_cast<OutputType>(valx0 + (valx1 - valx0) * distance1));
   }
@@ -260,7 +260,7 @@ private:
     const InternalComputationType & distance2 = index[2] - static_cast<InternalComputationType>(basei[2]);
 
     const TInputImage * const inputImagePtr = this->GetInputImage();
-    const RealType &          val000 = inputImagePtr->GetPixel(basei);
+    const FloatType &          val000 = inputImagePtr->GetPixel(basei);
     if (distance0 <= 0. && distance1 <= 0. && distance2 <= 0.)
     {
       return (static_cast<OutputType>(val000));
@@ -275,7 +275,7 @@ private:
         {
           return (static_cast<OutputType>(val000));
         }
-        const RealType & val100 = inputImagePtr->GetPixel(basei);
+        const FloatType & val100 = inputImagePtr->GetPixel(basei);
 
         return static_cast<OutputType>(val000 + (val100 - val000) * distance0);
       }
@@ -286,7 +286,7 @@ private:
         {
           return (static_cast<OutputType>(val000));
         }
-        const RealType & val010 = inputImagePtr->GetPixel(basei);
+        const FloatType & val010 = inputImagePtr->GetPixel(basei);
 
         return static_cast<OutputType>(val000 + (val010 - val000) * distance1);
       }
@@ -301,22 +301,22 @@ private:
           {
             return (static_cast<OutputType>(val000));
           }
-          const RealType & val010 = inputImagePtr->GetPixel(basei);
+          const FloatType & val010 = inputImagePtr->GetPixel(basei);
           return static_cast<OutputType>(val000 + (val010 - val000) * distance1);
         }
-        const RealType & val100 = inputImagePtr->GetPixel(basei);
-        const RealType & valx00 = val000 + (val100 - val000) * distance0;
+        const FloatType & val100 = inputImagePtr->GetPixel(basei);
+        const FloatType & valx00 = val000 + (val100 - val000) * distance0;
 
         ++basei[1];
         if (basei[1] > this->m_EndIndex[1]) // interpolate across "x"
         {
           return (static_cast<OutputType>(valx00));
         }
-        const RealType & val110 = inputImagePtr->GetPixel(basei);
+        const FloatType & val110 = inputImagePtr->GetPixel(basei);
 
         --basei[0];
-        const RealType & val010 = inputImagePtr->GetPixel(basei);
-        const RealType & valx10 = val010 + (val110 - val010) * distance0;
+        const FloatType & val010 = inputImagePtr->GetPixel(basei);
+        const FloatType & valx10 = val010 + (val110 - val010) * distance0;
 
         return static_cast<OutputType>(valx00 + (valx10 - valx00) * distance1);
       }
@@ -332,7 +332,7 @@ private:
           {
             return (static_cast<OutputType>(val000));
           }
-          const RealType & val001 = inputImagePtr->GetPixel(basei);
+          const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
           return static_cast<OutputType>(val000 + (val001 - val000) * distance2);
         }
@@ -347,25 +347,25 @@ private:
             {
               return (static_cast<OutputType>(val000));
             }
-            const RealType & val001 = inputImagePtr->GetPixel(basei);
+            const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
             return static_cast<OutputType>(val000 + (val001 - val000) * distance2);
           }
-          const RealType & val100 = inputImagePtr->GetPixel(basei);
+          const FloatType & val100 = inputImagePtr->GetPixel(basei);
 
-          const RealType & valx00 = val000 + (val100 - val000) * distance0;
+          const FloatType & valx00 = val000 + (val100 - val000) * distance0;
 
           ++basei[2];
           if (basei[2] > this->m_EndIndex[2]) // interpolate across "x"
           {
             return (static_cast<OutputType>(valx00));
           }
-          const RealType & val101 = inputImagePtr->GetPixel(basei);
+          const FloatType & val101 = inputImagePtr->GetPixel(basei);
 
           --basei[0];
-          const RealType & val001 = inputImagePtr->GetPixel(basei);
+          const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
-          const RealType & valx01 = val001 + (val101 - val001) * distance0;
+          const FloatType & valx01 = val001 + (val101 - val001) * distance0;
 
           return static_cast<OutputType>(valx00 + (valx01 - valx00) * distance2);
         }
@@ -381,25 +381,25 @@ private:
           {
             return (static_cast<OutputType>(val000));
           }
-          const RealType & val001 = inputImagePtr->GetPixel(basei);
+          const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
           return static_cast<OutputType>(val000 + (val001 - val000) * distance2);
         }
-        const RealType & val010 = inputImagePtr->GetPixel(basei);
+        const FloatType & val010 = inputImagePtr->GetPixel(basei);
 
-        const RealType & val0x0 = val000 + (val010 - val000) * distance1;
+        const FloatType & val0x0 = val000 + (val010 - val000) * distance1;
 
         ++basei[2];
         if (basei[2] > this->m_EndIndex[2]) // interpolate across "y"
         {
           return (static_cast<OutputType>(val0x0));
         }
-        const RealType & val011 = inputImagePtr->GetPixel(basei);
+        const FloatType & val011 = inputImagePtr->GetPixel(basei);
 
         --basei[1];
-        const RealType & val001 = inputImagePtr->GetPixel(basei);
+        const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
-        const RealType & val0x1 = val001 + (val011 - val001) * distance1;
+        const FloatType & val0x1 = val001 + (val011 - val001) * distance1;
 
         return static_cast<OutputType>(val0x0 + (val0x1 - val0x0) * distance2);
       }
@@ -418,30 +418,30 @@ private:
             {
               return (static_cast<OutputType>(val000));
             }
-            const RealType & val001 = inputImagePtr->GetPixel(basei);
+            const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
             return static_cast<OutputType>(val000 + (val001 - val000) * distance2);
           }
-          const RealType & val010 = inputImagePtr->GetPixel(basei);
-          const RealType & val0x0 = val000 + (val010 - val000) * distance1;
+          const FloatType & val010 = inputImagePtr->GetPixel(basei);
+          const FloatType & val0x0 = val000 + (val010 - val000) * distance1;
 
           ++basei[2];
           if (basei[2] > this->m_EndIndex[2]) // interpolate across "y"
           {
             return (static_cast<OutputType>(val0x0));
           }
-          const RealType & val011 = inputImagePtr->GetPixel(basei);
+          const FloatType & val011 = inputImagePtr->GetPixel(basei);
 
           --basei[1];
-          const RealType & val001 = inputImagePtr->GetPixel(basei);
+          const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
-          const RealType & val0x1 = val001 + (val011 - val001) * distance1;
+          const FloatType & val0x1 = val001 + (val011 - val001) * distance1;
 
           return static_cast<OutputType>(val0x0 + (val0x1 - val0x0) * distance2);
         }
-        const RealType & val100 = inputImagePtr->GetPixel(basei);
+        const FloatType & val100 = inputImagePtr->GetPixel(basei);
 
-        const RealType & valx00 = val000 + (val100 - val000) * distance0;
+        const FloatType & valx00 = val000 + (val100 - val000) * distance0;
 
         ++basei[1];
         if (basei[1] > this->m_EndIndex[1]) // interpolate across "xz"
@@ -452,43 +452,43 @@ private:
           {
             return (static_cast<OutputType>(valx00));
           }
-          const RealType & val101 = inputImagePtr->GetPixel(basei);
+          const FloatType & val101 = inputImagePtr->GetPixel(basei);
 
           --basei[0];
-          const RealType & val001 = inputImagePtr->GetPixel(basei);
+          const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
-          const RealType & valx01 = val001 + (val101 - val001) * distance0;
+          const FloatType & valx01 = val001 + (val101 - val001) * distance0;
 
           return static_cast<OutputType>(valx00 + (valx01 - valx00) * distance2);
         }
-        const RealType & val110 = inputImagePtr->GetPixel(basei);
+        const FloatType & val110 = inputImagePtr->GetPixel(basei);
 
         --basei[0];
-        const RealType & val010 = inputImagePtr->GetPixel(basei);
+        const FloatType & val010 = inputImagePtr->GetPixel(basei);
 
-        const RealType & valx10 = val010 + (val110 - val010) * distance0;
+        const FloatType & valx10 = val010 + (val110 - val010) * distance0;
 
-        const RealType & valxx0 = valx00 + (valx10 - valx00) * distance1;
+        const FloatType & valxx0 = valx00 + (valx10 - valx00) * distance1;
 
         ++basei[2];
         if (basei[2] > this->m_EndIndex[2]) // interpolate across "xy"
         {
           return (static_cast<OutputType>(valxx0));
         }
-        const RealType & val011 = inputImagePtr->GetPixel(basei);
+        const FloatType & val011 = inputImagePtr->GetPixel(basei);
 
         ++basei[0];
-        const RealType & val111 = inputImagePtr->GetPixel(basei);
+        const FloatType & val111 = inputImagePtr->GetPixel(basei);
 
         --basei[1];
-        const RealType & val101 = inputImagePtr->GetPixel(basei);
+        const FloatType & val101 = inputImagePtr->GetPixel(basei);
 
         --basei[0];
-        const RealType & val001 = inputImagePtr->GetPixel(basei);
+        const FloatType & val001 = inputImagePtr->GetPixel(basei);
 
-        const RealType & valx01 = val001 + (val101 - val001) * distance0;
-        const RealType & valx11 = val011 + (val111 - val011) * distance0;
-        const RealType & valxx1 = valx01 + (valx11 - valx01) * distance1;
+        const FloatType & valx01 = val001 + (val101 - val001) * distance0;
+        const FloatType & valx11 = val011 + (val111 - val011) * distance0;
+        const FloatType & valxx1 = valx01 + (valx11 - valx01) * distance1;
 
         return (static_cast<OutputType>(valxx0 + (valxx1 - valxx0) * distance2));
       }
@@ -507,25 +507,25 @@ private:
 
   /** \brief A method to generically set all components to zero
    */
-  template <typename RealTypeScalarRealType>
+  template <typename FloatTypeScalarFloatType>
   void
   MakeZeroInitializer(const TInputImage * const                      inputImagePtr,
-                      VariableLengthVector<RealTypeScalarRealType> & tempZeros) const
+                      VariableLengthVector<FloatTypeScalarFloatType> & tempZeros) const
   {
     // Variable length vector version to get the size of the pixel correct.
     constexpr typename TInputImage::IndexType idx = { { 0 } };
     const typename TInputImage::PixelType &   tempPixel = inputImagePtr->GetPixel(idx);
     const unsigned int                        sizeOfVarLengthVector = tempPixel.GetSize();
     tempZeros.SetSize(sizeOfVarLengthVector);
-    tempZeros.Fill(NumericTraits<RealTypeScalarRealType>::ZeroValue());
+    tempZeros.Fill(NumericTraits<FloatTypeScalarFloatType>::ZeroValue());
   }
 
-  template <typename RealTypeScalarRealType>
+  template <typename FloatTypeScalarFloatType>
   void
-  MakeZeroInitializer(const TInputImage * const itkNotUsed(inputImagePtr), RealTypeScalarRealType & tempZeros) const
+  MakeZeroInitializer(const TInputImage * const itkNotUsed(inputImagePtr), FloatTypeScalarFloatType & tempZeros) const
   {
     // All other cases
-    tempZeros = NumericTraits<RealTypeScalarRealType>::ZeroValue();
+    tempZeros = NumericTraits<FloatTypeScalarFloatType>::ZeroValue();
   }
 };
 } // end namespace itk

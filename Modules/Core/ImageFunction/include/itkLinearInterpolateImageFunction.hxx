@@ -48,17 +48,17 @@ LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(cons
   // neighbors. The weight for each neighbor is the fraction overlap
   // of the neighbor pixel with respect to a pixel centered on point.
 
-  // When RealType is VariableLengthVector, 'value' will be resized properly
+  // When FloatType is VariableLengthVector, 'value' will be resized properly
   // below when it's assigned again.
-  Concept::Detail::UniqueType<typename NumericTraits<RealType>::ScalarRealType>();
+  Concept::Detail::UniqueType<typename NumericTraits<FloatType>::FloatType>();
 
-  RealType value;
+  FloatType value;
   // Initialize variable "value" with overloaded function so that
   // in the case of variable length vectors the "value" is initialized
   // to all zeros of length equal to the InputImagePtr first pixel length.
   this->MakeZeroInitializer(inputImagePtr, value);
 
-  Concept::Detail::UniqueType<typename NumericTraits<InputPixelType>::ScalarRealType>();
+  Concept::Detail::UniqueType<typename NumericTraits<InputPixelType>::FloatType>();
 
   // Number of neighbors used in the interpolation
   constexpr unsigned long numberOfNeighbors = 1 << TInputImage::ImageDimension;
@@ -96,7 +96,7 @@ LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(cons
 
       upper >>= 1;
     }
-    value += static_cast<RealType>(inputImagePtr->GetPixel(neighIndex)) * overlap;
+    value += static_cast<FloatType>(inputImagePtr->GetPixel(neighIndex)) * overlap;
   }
 
   return (static_cast<OutputType>(value));
