@@ -43,7 +43,7 @@ namespace itk
  */
 template <typename TInputImage, typename TCoordRep = double>
 class ITK_TEMPLATE_EXPORT InterpolateImageFunction
-  : public ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>
+  : public ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::FloatType, TCoordRep>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(InterpolateImageFunction);
@@ -51,7 +51,7 @@ public:
   /** Standard class type aliases. */
   using Self = InterpolateImageFunction;
   using Superclass =
-    ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>;
+    ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::FloatType, TCoordRep>;
 
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
@@ -81,8 +81,8 @@ public:
   /** ContinuousIndex type alias support */
   using typename Superclass::ContinuousIndexType;
 
-  /** RealType type alias support */
-  using RealType = typename NumericTraits<typename TInputImage::PixelType>::RealType;
+  /** FloatType type alias support */
+  using FloatType = typename NumericTraits<typename TInputImage::PixelType>::FloatType;
 
   /** Interpolate the image at a point position
    *
@@ -124,7 +124,7 @@ public:
   OutputType
   EvaluateAtIndex(const IndexType & index) const override
   {
-    return (static_cast<RealType>(this->GetInputImage()->GetPixel(index)));
+    return (static_cast<FloatType>(this->GetInputImage()->GetPixel(index)));
   }
 
 /** Get the radius required for interpolation.
