@@ -172,7 +172,11 @@ private:
     double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
     if (randomValue < distance0)
     {
-      basei[0]++;
+      ++basei[0];
+      if (basei[0] > this->m_EndIndex[0])
+      {
+        --basei[0];
+      }
     }
 
     OutputType result = inputImagePtr->GetPixel(basei);
@@ -206,11 +210,19 @@ private:
     double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
     if (randomValue < distance0)
     {
-      basei[0]++;
+      ++basei[0];
+      if (basei[0] > this->m_EndIndex[0])
+      {
+        --basei[0];
+      }
     }
     if (randomValue < distance1)
     {
-      basei[1]++;
+      ++basei[1];
+      if (basei[1] > this->m_EndIndex[1])
+      {
+        --basei[1];
+      }
     }
 
     OutputType result = inputImagePtr->GetPixel(basei);
@@ -247,28 +259,40 @@ private:
     double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
     if (randomValue < distance0)
     {
-      basei[0]++;
+      ++basei[0];
+      if (basei[0] > this->m_EndIndex[0])
+      {
+        --basei[0];
+      }
     }
     if (randomValue < distance1)
     {
-      basei[1]++;
+      ++basei[1];
+      if (basei[1] > this->m_EndIndex[1])
+      {
+        --basei[1];
+      }
     }
     if (randomValue < distance2)
     {
-      basei[2]++;
+      ++basei[2];
+      if (basei[2] > this->m_EndIndex[2])
+      {
+        --basei[2];
+      }
     }
 
-    OutputType result = inputImagePtr->GetPixel(basei);
+    RealType result = inputImagePtr->GetPixel(basei);
     {
       std::lock_guard<std::mutex> guard(mapMutex);
       if (auto previous = m_PreviousValues.find(indexKey); previous != m_PreviousValues.end())
       {
-        result = static_cast<OutputType>(0.9 * previous->second + 0.1 * result);
+        result = static_cast<RealType>(0.9 * previous->second + 0.1 * result);
       }
       m_PreviousValues[indexKey] = result;
     }
 
-    return (result);
+    return static_cast<OutputType>(result);
   }
 
   inline OutputType
