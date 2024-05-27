@@ -22,7 +22,7 @@
 #include "itkVariableLengthVector.h"
 #include <algorithm> // For max.
 
-#include <cstdlib> // For rand() and RAND_MAX
+#include <cstdlib> // For lcg()
 #include <ctime>   // For seeding with time
 
 namespace itk
@@ -120,11 +120,25 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
+  // LCG parameters
+  const static unsigned long a = 1664525;
+  const static unsigned long c = 1013904223;
+  const static unsigned long m = 4294967296;                                   // 2^32
+  inline static unsigned long       seed = static_cast<unsigned long>(time(nullptr)); // Seed value
+
   struct DispatchBase
   {};
   template <unsigned int>
   struct Dispatch : public DispatchBase
   {};
+
+  // LCG function
+  inline unsigned long
+  lcg() const
+  {
+    seed = (a * seed + c) % m;
+    return seed;
+  }
 
   inline OutputType
   EvaluateOptimized(const Dispatch<0> &, const ContinuousIndexType &) const
@@ -143,7 +157,7 @@ private:
     const TInputImage * const inputImagePtr = this->GetInputImage();
 
     // Select a random point weighted by their distance
-    double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
+    InternalComputationType randomValue = static_cast<InternalComputationType>(this->lcg());
     if (randomValue < distance0)
     {
       ++basei[0];
@@ -170,7 +184,7 @@ private:
     const TInputImage * const inputImagePtr = this->GetInputImage();
 
     // Select a random point weighted by their distance
-    double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
+    const InternalComputationType randomValue = static_cast<InternalComputationType>(this->lcg());
     if (randomValue < distance0)
     {
       ++basei[0];
@@ -208,7 +222,7 @@ private:
     const TInputImage * const inputImagePtr = this->GetInputImage();
 
     // Select a random point weighted by their distance
-    double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
+    const InternalComputationType randomValue = static_cast<InternalComputationType>(this->lcg());
     if (randomValue < distance0)
     {
       ++basei[0];
