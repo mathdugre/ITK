@@ -24,9 +24,6 @@
 
 #include <cstdlib> // For rand() and RAND_MAX
 #include <ctime>   // For seeding with time
-#include <unordered_map>
-#include <vector>
-// #include <mutex>
 
 namespace itk
 {
@@ -123,33 +120,11 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
-  // mutable std::mutex                                  mapMutex;
-  mutable std::unordered_map<std::string, OutputType> m_PreviousValues;
-
   struct DispatchBase
   {};
   template <unsigned int>
   struct Dispatch : public DispatchBase
   {};
-
-  static std::string
-  CreateIndexKey(const ContinuousIndexType & index)
-  {
-    std::ostringstream stream;
-    for (auto & value : index)
-    {
-      stream << value << ",";
-    }
-    return stream.str();
-  }
-
-  // void
-  // updateMap(const std::unordered_map & map, const std::string & indexKey, OutputType result)
-  // {
-  //   size_t                      mutex_index = std::hash<std::string>{}(indexKey) % mutexes.size();
-  //   std::lock_guard<std::mutex> lock(mutexes[mutex_index]);
-  //   map[indexKey] = result;
-  // }
 
   inline OutputType
   EvaluateOptimized(const Dispatch<0> &, const ContinuousIndexType &) const
@@ -166,7 +141,6 @@ private:
     const InternalComputationType distance0 = index[0] - static_cast<InternalComputationType>(basei[0]);
 
     const TInputImage * const inputImagePtr = this->GetInputImage();
-    std::string               indexKey = CreateIndexKey(basei);
 
     // Select a random point weighted by their distance
     double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
@@ -179,17 +153,7 @@ private:
       }
     }
 
-    OutputType result = inputImagePtr->GetPixel(basei);
-    {
-      // std::lock_guard<std::mutex> guard(mapMutex);
-      if (auto previous = m_PreviousValues.find(indexKey); previous != m_PreviousValues.end())
-      {
-        result = static_cast<OutputType>(0.9 * previous->second + 0.1 * result);
-      }
-      m_PreviousValues[indexKey] = result;
-    }
-
-    return (result);
+    return static_cast<OutputType>(inputImagePtr->GetPixel(basei));
   }
 
   inline OutputType
@@ -204,7 +168,6 @@ private:
     const InternalComputationType distance1 = index[1] - static_cast<InternalComputationType>(basei[1]);
 
     const TInputImage * const inputImagePtr = this->GetInputImage();
-    std::string               indexKey = CreateIndexKey(basei);
 
     // Select a random point weighted by their distance
     double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
@@ -225,17 +188,7 @@ private:
       }
     }
 
-    OutputType result = inputImagePtr->GetPixel(basei);
-    {
-      // std::lock_guard<std::mutex> guard(mapMutex);
-      if (auto previous = m_PreviousValues.find(indexKey); previous != m_PreviousValues.end())
-      {
-        result = static_cast<OutputType>(0.9 * previous->second + 0.1 * result);
-      }
-      m_PreviousValues[indexKey] = result;
-    }
-
-    return (result);
+    return static_cast<OutputType>(inputImagePtr->GetPixel(basei));
   }
 
   inline OutputType
@@ -253,7 +206,6 @@ private:
     const InternalComputationType distance2 = index[2] - static_cast<InternalComputationType>(basei[2]);
 
     const TInputImage * const inputImagePtr = this->GetInputImage();
-    std::string               indexKey = CreateIndexKey(basei);
 
     // Select a random point weighted by their distance
     double randomValue = static_cast<InternalComputationType>(std::rand()) / RAND_MAX;
@@ -282,17 +234,7 @@ private:
       }
     }
 
-    RealType result = inputImagePtr->GetPixel(basei);
-    {
-      // std::lock_guard<std::mutex> guard(mapMutex);
-      if (auto previous = m_PreviousValues.find(indexKey); previous != m_PreviousValues.end())
-      {
-        result = static_cast<RealType>(0.9 * previous->second + 0.1 * result);
-      }
-      m_PreviousValues[indexKey] = result;
-    }
-
-    return static_cast<OutputType>(result);
+    return static_cast<OutputType>(inputImagePtr->GetPixel(basei));
   }
 
   inline OutputType
