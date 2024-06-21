@@ -36,8 +36,10 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
   ImageToImageMetricv4()
 {
   /* Interpolators. Default to linear. */
-  using FixedLinearInterpolatorType = LinearInterpolateImageFunction<FixedImageType, CoordinateRepresentationType>;
-  using MovingLinearInterpolatorType = LinearInterpolateImageFunction<MovingImageType, CoordinateRepresentationType>;
+  using FixedLinearInterpolatorType =
+    LinearInterpolateImageFunction<FixedImageType, CoordinateRepresentationType, FixedPixelType>;
+  using MovingLinearInterpolatorType =
+    LinearInterpolateImageFunction<MovingImageType, CoordinateRepresentationType, MovingPixelType>;
   this->m_FixedInterpolator = FixedLinearInterpolatorType::New();
   this->m_MovingInterpolator = MovingLinearInterpolatorType::New();
 

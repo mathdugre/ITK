@@ -287,8 +287,9 @@ public:
   using FixedSampledPointSetConstPointer = typename FixedSampledPointSetType::ConstPointer;
 
   /**  Type of the Interpolator Base class */
-  using FixedInterpolatorType = InterpolateImageFunction<FixedImageType, CoordinateRepresentationType>;
-  using MovingInterpolatorType = InterpolateImageFunction<MovingImageType, CoordinateRepresentationType>;
+  using FixedInterpolatorType = InterpolateImageFunction<FixedImageType, CoordinateRepresentationType, FixedPixelType>;
+  using MovingInterpolatorType =
+    InterpolateImageFunction<MovingImageType, CoordinateRepresentationType, MovingPixelType>;
   using FixedInterpolatorPointer = typename FixedInterpolatorType::Pointer;
   using MovingInterpolatorPointer = typename MovingInterpolatorType::Pointer;
 

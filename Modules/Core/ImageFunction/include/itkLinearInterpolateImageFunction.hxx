@@ -25,10 +25,10 @@
 
 namespace itk
 {
-template <typename TInputImage, typename TCoordRep>
+template <typename TInputImage, typename TCoordRep, typename TRealType>
 auto
-LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(
-  const ContinuousIndexType & index) const -> OutputType
+LinearInterpolateImageFunction<TInputImage, TCoordRep, TRealType>::EvaluateUnoptimized(const ContinuousIndexType & index) const
+  -> OutputType
 {
   // Avoid the smartpointer de-reference in the loop for
   // "return m_InputImage.GetPointer()"
@@ -97,9 +97,10 @@ LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(
   return (static_cast<OutputType>(value));
 }
 
-template <typename TInputImage, typename TCoordRep>
+template <typename TInputImage, typename TCoordRep, typename TRealType>
 void
-LinearInterpolateImageFunction<TInputImage, TCoordRep>::PrintSelf(std::ostream & os, Indent indent) const
+LinearInterpolateImageFunction<TInputImage, TCoordRep, TRealType>::PrintSelf(std::ostream & os,
+                                                                                      Indent         indent) const
 {
   this->Superclass::PrintSelf(os, indent);
 }
