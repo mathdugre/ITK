@@ -43,9 +43,11 @@ namespace itk
  * \ingroup ImageFunctions ImageInterpolators
  * \ingroup ITKImageFunction
  */
-template <typename TInputImage, typename TCoordRep = double>
+template <typename TInputImage,
+          typename TCoordRep = double,
+          typename TRealType = typename NumericTraits<typename TInputImage::PixelType>::RealType>
 class ITK_TEMPLATE_EXPORT VectorInterpolateImageFunction
-  : public ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>
+  : public ImageFunction<TInputImage, TRealType, TCoordRep>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(VectorInterpolateImageFunction);
@@ -59,7 +61,7 @@ public:
   /** Standard class type aliases. */
   using Self = VectorInterpolateImageFunction;
   using Superclass =
-    ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>;
+    ImageFunction<TInputImage, TRealType, TCoordRep>;
 
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;

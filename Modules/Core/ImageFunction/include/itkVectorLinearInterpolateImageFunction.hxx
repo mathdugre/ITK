@@ -25,14 +25,14 @@
 namespace itk
 {
 
-template <typename TInputImage, typename TCoordRep>
-const unsigned long VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::m_Neighbors =
+template <typename TInputImage, typename TCoordRep, typename TRealType>
+const unsigned long VectorLinearInterpolateImageFunction<TInputImage, TCoordRep, TRealType>::m_Neighbors =
   1 << TInputImage::ImageDimension;
 
 
-template <typename TInputImage, typename TCoordRep>
+template <typename TInputImage, typename TCoordRep, typename TRealType>
 auto
-VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuousIndex(
+VectorLinearInterpolateImageFunction<TInputImage, TCoordRep, TRealType>::EvaluateAtContinuousIndex(
   const ContinuousIndexType & index) const -> OutputType
 {
   //
