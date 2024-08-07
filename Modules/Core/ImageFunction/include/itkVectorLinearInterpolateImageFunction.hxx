@@ -56,8 +56,8 @@ VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
   OutputType output;
   output.Fill(0.0);
 
-  using ScalarRealType = typename NumericTraits<PixelType>::ScalarRealType;
-  ScalarRealType totalOverlap{};
+  using OverlapType = typename TInputImage::PixelType::ValueType;
+  OverlapType totalOverlap{};
 
   for (unsigned int counter = 0; counter < m_Neighbors; ++counter)
   {

@@ -20,9 +20,15 @@
 
 #include "itkImageFunction.h"
 #include "itkFixedArray.h"
+#include <type_traits>
 
 namespace itk
 {
+template <typename TInputImage>
+using TOutputType = typename std::conditional<
+  std::is_same<typename TInputImage::PixelType::ValueType, float>::value,
+  typename NumericTraits<typename TInputImage::PixelType>::FloatType,
+  typename NumericTraits<typename TInputImage::PixelType>::RealType>::type;
 
 /**
  * \class VectorInterpolateImageFunction
@@ -45,7 +51,7 @@ namespace itk
  */
 template <typename TInputImage, typename TCoordRep = double>
 class ITK_TEMPLATE_EXPORT VectorInterpolateImageFunction
-  : public ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>
+  : public ImageFunction<TInputImage, TOutputType<TInputImage>, TCoordRep>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(VectorInterpolateImageFunction);
@@ -59,7 +65,7 @@ public:
   /** Standard class type aliases. */
   using Self = VectorInterpolateImageFunction;
   using Superclass =
-    ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>;
+    ImageFunction<TInputImage, TOutputType<TInputImage>, TCoordRep>;
 
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
