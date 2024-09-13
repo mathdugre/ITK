@@ -247,7 +247,7 @@ itkWindowedSincInterpolateImageFunctionTest(int, char *[])
   // position near image border
   {
     double       epsilon = 1.0e-10;
-    CoordRepType darray[3] = { 19 - epsilon, 20, 40 };
+    CoordRepType darray[3] = { static_cast<CoordRepType>(19 - epsilon), 20, 40 };
     output = OutputType(79);
     cindex = ContinuousIndexType(darray);
     passed = SincInterpolate::TestContinuousIndex(interp, cindex, true, output);

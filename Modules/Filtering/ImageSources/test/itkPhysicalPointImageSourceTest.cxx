@@ -130,7 +130,10 @@ itkPhysicalPointImageSourceTest(int argc, char * argv[])
   }
   else
   {
-    itk::SpacePrecisionType M[] = { std::cos(theta), -std::sin(theta), std::sin(theta), std::cos(theta) };
+    itk::SpacePrecisionType M[] = { static_cast<itk::SpacePrecisionType>(std::cos(theta)),
+                                    static_cast<itk::SpacePrecisionType>(-std::sin(theta)),
+                                    static_cast<itk::SpacePrecisionType>(std::sin(theta)),
+                                    static_cast<itk::SpacePrecisionType> (std::cos(theta)) };
 
     direction = vnl_matrix<itk::SpacePrecisionType>(M, 2, 2);
     testStatus = itkPhysicalPointImageSourceTest<itk::VectorImage<float, ImageDimension>>(

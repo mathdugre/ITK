@@ -102,7 +102,7 @@ public:
  * \ingroup ITKTransform
  */
 
-template <typename TParametersValueType = double, unsigned int VInputDimension = 3, unsigned int VOutputDimension = 3>
+template <typename TParametersValueType, unsigned int VInputDimension = 3, unsigned int VOutputDimension = 3>
 class ITK_TEMPLATE_EXPORT MatrixOffsetTransformBase
   : public Transform<TParametersValueType, VInputDimension, VOutputDimension>
 {

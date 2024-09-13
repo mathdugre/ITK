@@ -19,6 +19,7 @@
 // First include the header file to be tested:
 #include "itkImage.h"
 #include <gtest/gtest.h>
+#include "itkFloatTypes.h"
 
 namespace
 {
@@ -237,7 +238,7 @@ TEST(Image, IsXImageGeometry)
   EXPECT_FALSE(image2->IsSameImageGeometryAs(image1.GetPointer()));
 
   image2 = generate_image<ImageType>({ 2, 2 });
-  image2->SetSpacing(ImageType::SpacingType({ 1.0 + tol, 1.0 }));
+  image2->SetSpacing(ImageType::SpacingType({ static_cast< itk::SpacePrecisionType >(1.0 + tol), 1.0 }));
   EXPECT_TRUE(image1->IsCongruentImageGeometry(image2.GetPointer(), tol, tol));
   EXPECT_TRUE(image2->IsCongruentImageGeometry(image1.GetPointer(), tol, tol));
   EXPECT_FALSE(image1->IsCongruentImageGeometry(image2.GetPointer(), tol * 0.5, tol));
