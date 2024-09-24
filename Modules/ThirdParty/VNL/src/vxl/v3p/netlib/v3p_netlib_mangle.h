@@ -34,6 +34,7 @@ nm libv3p_netlib.a |grep " [TR] "
 #define cswap_ v3p_netlib_cswap_
 #define cub_ v3p_netlib_cub_
 #define dasum_ v3p_netlib_dasum_
+#define sasum_ v3p_netlib_sasum_
 #define daxpy_ v3p_netlib_daxpy_
 #define dcabs1_ v3p_netlib_dcabs1_
 #define dchscdf_ v3p_netlib_dchscdf_
@@ -143,6 +144,10 @@ nm libv3p_netlib.a |grep " [TR] "
 #define dsteqr_ v3p_netlib_dsteqr_
 #define dstqrb_ v3p_netlib_dstqrb_
 #define dsvdc_ v3p_netlib_dsvdc_
+#define spoco_ v3p_netlib_spoco_
+#define spodi_ v3p_netlib_spodi_
+#define spofa_ v3p_netlib_spofa_
+#define sposl_ v3p_netlib_sposl_
 #define dswap_ v3p_netlib_dswap_
 #define dtgex2_ v3p_netlib_dtgex2_
 #define dtgexc_ v3p_netlib_dtgexc_

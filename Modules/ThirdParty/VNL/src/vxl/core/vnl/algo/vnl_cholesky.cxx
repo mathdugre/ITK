@@ -11,7 +11,7 @@
 #include <cassert>
 #include <iostream>
 #include "vnl_cholesky.h"
-#include <vnl/algo/vnl_netlib.h> // dpofa_(), dposl_(), dpoco_(), dpodi_()
+#include <vnl/algo/vnl_netlib.h> // dpofa_(), dposl_(), dpoco_(), dpodi_(), spofa_(), sposl_(), spoco_(), spodi_()
 
 //: Cholesky decomposition.
 // Make cholesky decomposition of M optionally computing
@@ -23,7 +23,8 @@
 // slowdown:     7.0    4.6    2.8    1.4   1.18   1.04   1.02
 // \endverbatim
 
-vnl_cholesky::vnl_cholesky(vnl_matrix<double> const & M, Operation mode)
+template <typename T>
+vnl_cholesky<T>::vnl_cholesky(vnl_matrix<T> const & M, Operation mode)
   : A_(M)
 {
   long n = M.columns();
@@ -37,14 +38,28 @@ vnl_cholesky::vnl_cholesky(vnl_matrix<double> const & M, Operation mode)
   if (mode != estimate_condition)
   {
     // Quick factorization
-    v3p_netlib_dpofa_(A_.data_block(), &n, &n, &num_dims_rank_def_);
+    if constexpr (std::is_same<T, double>::value)
+    {
+      v3p_netlib_dpofa_(A_.data_block(), &n, &n, &num_dims_rank_def_);
+    }
+    else if constexpr (std::is_same<T, float>::value)
+    {
+      v3p_netlib_spofa_(A_.data_block(), &n, &n, &num_dims_rank_def_);
+    }
     if (mode == verbose && num_dims_rank_def_ != 0)
       std::cerr << "vnl_cholesky: " << num_dims_rank_def_ << " dimensions of non-posdeffness\n";
   }
   else
   {
-    vnl_vector<double> nullvec(n);
-    v3p_netlib_dpoco_(A_.data_block(), &n, &n, &rcond_, nullvec.data_block(), &num_dims_rank_def_);
+    vnl_vector<T> nullvec(n);
+    if constexpr (std::is_same<T, double>::value)
+    {
+      v3p_netlib_dpoco_(A_.data_block(), &n, &n, &rcond_, nullvec.data_block(), &num_dims_rank_def_);
+    }
+    else if constexpr (std::is_same<T, float>::value)
+    {
+      v3p_netlib_spoco_(A_.data_block(), &n, &n, &rcond_, nullvec.data_block(), &num_dims_rank_def_);
+    }
     if (num_dims_rank_def_ != 0)
       std::cerr << "vnl_cholesky: rcond=" << rcond_ << " so " << num_dims_rank_def_
                 << " dimensions of non-posdeffness\n";
@@ -54,54 +69,85 @@ vnl_cholesky::vnl_cholesky(vnl_matrix<double> const & M, Operation mode)
 //: Solve least squares problem M x = b.
 //  The right-hand-side std::vector x may be b,
 //  which will give a fractional increase in speed.
+template <typename T>
 void
-vnl_cholesky::solve(vnl_vector<double> const & b, vnl_vector<double> * x) const
+vnl_cholesky<T>::solve(vnl_vector<T> const & b, vnl_vector<T> * x) const
 {
   assert(b.size() == A_.columns());
 
   *x = b;
   long n = A_.columns();
-  v3p_netlib_dposl_(A_.data_block(), &n, &n, x->data_block());
+  if constexpr (std::is_same<T, double>::value)
+  {
+    v3p_netlib_dposl_(A_.data_block(), &n, &n, x->data_block());
+  }
+  else if constexpr (std::is_same<T, float>::value)
+  {
+    v3p_netlib_sposl_(A_.data_block(), &n, &n, x->data_block());
+  }
 }
 
 //: Solve least squares problem M x = b.
-vnl_vector<double>
-vnl_cholesky::solve(vnl_vector<double> const & b) const
+template <typename T>
+vnl_vector<T>
+vnl_cholesky<T>::solve(vnl_vector<T> const & b) const
 {
   assert(b.size() == A_.columns());
 
   long n = A_.columns();
-  vnl_vector<double> ret = b;
-  v3p_netlib_dposl_(A_.data_block(), &n, &n, ret.data_block());
+  vnl_vector<T> ret = b;
+  if constexpr (std::is_same<T, double>::value)
+  {
+    v3p_netlib_dposl_(A_.data_block(), &n, &n, ret.data_block());
+  }
+  else if constexpr (std::is_same<T, float>::value)
+  {
+    v3p_netlib_sposl_(A_.data_block(), &n, &n, ret.data_block());
+  }
   return ret;
 }
 
 //: Compute determinant.
-double
-vnl_cholesky::determinant() const
+template <typename T>
+T vnl_cholesky<T>::determinant() const
 {
   long n = A_.columns();
-  vnl_matrix<double> I = A_;
-  double det[2];
+  vnl_matrix<T> I = A_;
+  T det[2];
   long job = 10;
-  v3p_netlib_dpodi_(I.data_block(), &n, &n, det, &job);
+  if constexpr (std::is_same<T, double>::value)
+  {
+    v3p_netlib_dpodi_(I.data_block(), &n, &n, det, &job);
+  }
+  else if constexpr (std::is_same<T, float>::value)
+  {
+    v3p_netlib_spodi_(I.data_block(), &n, &n, det, &job);
+  }
   return det[0] * std::pow(10.0, det[1]);
 }
 
 // : Compute inverse.  Not efficient.
-vnl_matrix<double>
-vnl_cholesky::inverse() const
+template <typename T>
+vnl_matrix<T>
+vnl_cholesky<T>::inverse() const
 {
   if (num_dims_rank_def_)
   {
     std::cerr << "vnl_cholesky: Calling inverse() on rank-deficient matrix\n";
-    return vnl_matrix<double>();
+    return vnl_matrix<T>();
   }
 
   long n = A_.columns();
-  vnl_matrix<double> I = A_;
+  vnl_matrix<T> I = A_;
   long job = 01;
-  v3p_netlib_dpodi_(I.data_block(), &n, &n, nullptr, &job);
+  if constexpr (std::is_same<T, double>::value)
+  {
+    v3p_netlib_dpodi_(I.data_block(), &n, &n, nullptr, &job);
+  }
+  else if constexpr (std::is_same<T, float>::value)
+  {
+    v3p_netlib_spodi_(I.data_block(), &n, &n, nullptr, &job);
+  }
 
   // Copy lower triangle into upper
   for (int i = 0; i < n; ++i)
@@ -112,11 +158,12 @@ vnl_cholesky::inverse() const
 }
 
 //: Return lower-triangular factor.
-vnl_matrix<double>
-vnl_cholesky::lower_triangle() const
+template <typename T>
+vnl_matrix<T>
+vnl_cholesky<T>::lower_triangle() const
 {
   unsigned n = A_.columns();
-  vnl_matrix<double> L(n, n);
+  vnl_matrix<T> L(n, n);
   // Zap upper triangle and transpose
   for (unsigned i = 0; i < n; ++i)
   {
@@ -132,11 +179,12 @@ vnl_cholesky::lower_triangle() const
 
 
 //: Return upper-triangular factor.
-vnl_matrix<double>
-vnl_cholesky::upper_triangle() const
+template <typename T>
+vnl_matrix<T>
+vnl_cholesky<T>::upper_triangle() const
 {
   unsigned n = A_.columns();
-  vnl_matrix<double> U(n, n);
+  vnl_matrix<T> U(n, n);
   // Zap lower triangle and transpose
   for (unsigned i = 0; i < n; ++i)
   {
@@ -149,3 +197,6 @@ vnl_cholesky::upper_triangle() const
   }
   return U;
 }
+
+template class vnl_cholesky<float>;
+template class vnl_cholesky<double>;

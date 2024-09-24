@@ -25,6 +25,7 @@
 #undef cswap_
 #undef cub_
 #undef dasum_
+#undef sasum_
 #undef daxpy_
 #undef dcabs1_
 #undef dchscdf_
@@ -133,7 +134,10 @@
 #undef dstats_
 #undef dsteqr_
 #undef dstqrb_
-#undef dsvdc_
+#undef spoco_
+#undef spodi_
+#undef spofa_
+#undef sposl_
 #undef dswap_
 #undef dtgex2_
 #undef dtgexc_

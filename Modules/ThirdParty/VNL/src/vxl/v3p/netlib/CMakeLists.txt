@@ -77,6 +77,7 @@ set(V3P_NETLIB_blas_SOURCES
      blas/csrot.c blas/csrot.h
      blas/cswap.c blas/cswap.h
      blas/dasum.c blas/dasum.h
+     blas/sasum.c blas/sasum.h
      blas/daxpy.c blas/daxpy.h
      blas/dcabs1.c blas/dcabs1.h
      blas/dcopy.c blas/dcopy.h
@@ -146,6 +147,11 @@ set(V3P_NETLIB_linpack_SOURCES
      linpack/dpodi.c linpack/dpodi.h
      linpack/dpofa.c linpack/dpofa.h
      linpack/dposl.c linpack/dposl.h
+     
+     linpack/spoco.c linpack/spoco.h
+     linpack/spodi.c linpack/spodi.h
+     linpack/spofa.c linpack/spofa.h
+     linpack/sposl.c linpack/sposl.h
    )
 set(V3P_NETLIB_temperton_SOURCES
      temperton/dgpfa.c temperton/dgpfa.h

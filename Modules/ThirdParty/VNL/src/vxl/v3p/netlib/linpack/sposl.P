@@ -1,0 +1,1 @@
+extern int sposl_(real * a, integer * lda, integer * n, real * b);

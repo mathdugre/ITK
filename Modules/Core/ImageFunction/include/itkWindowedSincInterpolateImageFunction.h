@@ -22,6 +22,7 @@
 #include "itkZeroFluxNeumannBoundaryCondition.h"
 #include "itkInterpolateImageFunction.h"
 #include "itkMath.h"
+#include <type_traits>
 
 namespace itk
 {

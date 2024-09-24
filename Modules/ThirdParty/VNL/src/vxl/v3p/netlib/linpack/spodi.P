@@ -1,0 +1,1 @@
+extern int spodi_(real * a, integer * lda, integer * n, real * det, integer * job);

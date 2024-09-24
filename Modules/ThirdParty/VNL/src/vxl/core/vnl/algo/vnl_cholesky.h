@@ -28,6 +28,7 @@
 //  equation it is wise to construct with mode==estimate_condition and
 //  check that rcond()>sqrt(machine precision).  If this is not the case
 //  it might be a good idea to use vnl_svd instead.
+template <typename T = double>
 class VNL_ALGO_EXPORT vnl_cholesky
 {
  public:
@@ -39,32 +40,32 @@ class VNL_ALGO_EXPORT vnl_cholesky
   };
 
   //: Make cholesky decomposition of M optionally computing the reciprocal condition number.
-  vnl_cholesky(vnl_matrix<double> const& M, Operation mode = verbose);
+  vnl_cholesky(vnl_matrix<T> const& M, Operation mode = verbose);
  ~vnl_cholesky() = default;
 
   //: Solve LS problem M x = b
-  vnl_vector<double> solve(vnl_vector<double> const& b) const;
+  vnl_vector<T> solve(vnl_vector<T> const& b) const;
 
   //: Solve LS problem M x = b
-  void solve(vnl_vector<double> const& b, vnl_vector<double>* x) const;
+  void solve(vnl_vector<T> const& b, vnl_vector<T>* x) const;
 
   //: Compute determinant
-  double determinant() const;
+  T determinant() const;
 
   //   Compute inverse.  Not efficient.
   // It's broken, I don't have time to fix it.
   // Mail awf@robots if you need it and I'll tell you as much as I can
   // to fix it.
-  vnl_matrix<double> inverse() const;
+  vnl_matrix<T> inverse() const;
 
   //: Return lower-triangular factor.
-  vnl_matrix<double> lower_triangle() const;
+  vnl_matrix<T> lower_triangle() const;
 
   //: Return upper-triangular factor.
-  vnl_matrix<double> upper_triangle() const;
+  vnl_matrix<T> upper_triangle() const;
 
   //: Return the decomposition matrix
-  vnl_matrix<double> const& L_badly_named_method() const { return A_; }
+  vnl_matrix<T> const& L_badly_named_method() const { return A_; }
 
   //: A Success/failure flag
   int rank_deficiency() const { return num_dims_rank_def_; }
@@ -73,19 +74,19 @@ class VNL_ALGO_EXPORT vnl_cholesky
   // As long as rcond()>sqrt(precision) the decomposition can be used for
   // solving equations safely.
   // Not calculated unless Operation mode at construction was estimate_condition.
-  double rcond() const { return rcond_; }
+  T rcond() const { return rcond_; }
 
   //: Return computed nullvector.
   // Not calculated unless Operation mode at construction was estimate_condition.
-  vnl_vector<double>      & nullvector()       { return nullvector_; }
-  vnl_vector<double> const& nullvector() const { return nullvector_; }
+  vnl_vector<T>      & nullvector()       { return nullvector_; }
+  vnl_vector<T> const& nullvector() const { return nullvector_; }
 
  protected:
   // Data Members--------------------------------------------------------------
-  vnl_matrix<double> A_;
-  double rcond_;
+  vnl_matrix<T> A_;
+  T rcond_;
   long num_dims_rank_def_;
-  vnl_vector<double> nullvector_;
+  vnl_vector<T> nullvector_;
 
  private:
   //: Copy constructor - privatised to avoid it being used

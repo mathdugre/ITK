@@ -1,0 +1,1 @@
+extern int spoco_(real * a, integer * lda, integer * n, real * rcond, real * z__, integer * info);

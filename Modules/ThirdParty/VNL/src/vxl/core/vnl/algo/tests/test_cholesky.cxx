@@ -11,7 +11,7 @@
 void
 test_cholesky()
 {
-  vnl_random rng(1000);
+  vnl_random         rng(1000);
   vnl_matrix<double> A(3, 3);
   test_util_fill_random(A.begin(), A.end(), rng);
   A = A * A.transpose();
@@ -30,7 +30,7 @@ test_cholesky()
     testlib_test_assert_near("Ai * A - I", (A * chol.inverse() - I).fro_norm());
   }
   {
-    vnl_cholesky chol(A, vnl_cholesky::estimate_condition);
+    vnl_cholesky chol(A, vnl_cholesky<>::estimate_condition);
     testlib_test_assert_near("Ai * A - I", (chol.inverse() * A - I).fro_norm());
     testlib_test_assert_near("Ai * A - I", (A * chol.inverse() - I).fro_norm());
   }
