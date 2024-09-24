@@ -21,6 +21,7 @@
 #include "itkAffineTransform.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
+#include "itkFloatTypes.h"
 
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix_fixed.h"
@@ -78,7 +79,7 @@ public:
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;
 
   /** Standard scalar type within this class. */
-  using ScalarType = double;
+  using ScalarType = itk::SpacePrecisionType;
 
   /** Standard vector type within this class. */
   using VectorType = Vector<ScalarType, Self::ImageDimension>;
@@ -101,7 +102,7 @@ public:
   using ImageConstPointer = typename ImageType::ConstPointer;
 
   /** Affine transform for mapping to and from principal axis */
-  using AffineTransformType = AffineTransform<double, Self::ImageDimension>;
+  using AffineTransformType = AffineTransform<ScalarType, Self::ImageDimension>;
   using AffineTransformPointer = typename AffineTransformType::Pointer;
 
   /** Set the input image. */
