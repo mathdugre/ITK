@@ -175,6 +175,22 @@ public:
     this->m_Scales = scales;
   }
 
+  virtual TInternalComputationValueType
+  GetLipschitzEstimate() const
+  {
+    itkExceptionMacro("GetLipschitzEstimate() not implemented for this optimizer.");
+  }
+  virtual TInternalComputationValueType
+  GetParametersTwoNorm() const
+  {
+    itkExceptionMacro("GetParametersTwoNorm() not implemented for this optimizer.");
+  }
+  virtual TInternalComputationValueType
+  GetGradientTwoNorm() const
+  {
+    itkExceptionMacro("GetParametersTwoNorm() not implemented for this optimizer.");
+  }
+
   /** Get current parameters scaling. */
   itkGetConstReferenceMacro(Scales, ScalesType);
 

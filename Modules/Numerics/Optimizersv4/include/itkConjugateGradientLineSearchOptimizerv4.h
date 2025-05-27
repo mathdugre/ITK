@@ -78,6 +78,23 @@ public:
   void
   StartOptimization(bool doOnlyInitialization = false) override;
 
+  /** Get the estimated Lipschitz constant */
+  TInternalComputationValueType
+  GetLipschitzEstimate() const override
+  {
+    return m_LipschitzEstimate;
+  }
+  TInternalComputationValueType
+  GetParametersTwoNorm() const override
+  {
+    return this->m_Metric->GetParameters().two_norm();
+  }
+  TInternalComputationValueType
+  GetGradientTwoNorm() const override
+  {
+    return this->m_Gradient.two_norm();
+  }
+
 protected:
   /** Advance one Step following the gradient direction.
    * Includes transform update. */
@@ -94,8 +111,9 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
-  DerivativeType m_LastGradient{};
-  DerivativeType m_ConjugateGradient{};
+  DerivativeType                m_LastGradient{};
+  DerivativeType                m_ConjugateGradient{};
+  TInternalComputationValueType m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
 };
 
 /** This helps to meet backward compatibility */

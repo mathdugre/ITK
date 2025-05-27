@@ -201,7 +201,26 @@ public:
   virtual void
   EstimateLearningRate();
 
-protected:
+  /** Get the estimated Lipschitz constant */
+  TInternalComputationValueType
+  GetLipschitzEstimate() const override
+  {
+    return m_LipschitzEstimate;
+  }
+  TInternalComputationValueType
+  GetParametersTwoNorm() const override
+  {
+    return this->m_Metric->GetParameters().two_norm();
+  }
+  TInternalComputationValueType
+  GetGradientTwoNorm() const override
+  {
+    return this->m_Gradient.two_norm();
+  }
+
+
+  protected
+  :
   /** Advance one step following the gradient direction.
    * Includes transform update. */
   virtual void
@@ -240,7 +259,8 @@ protected:
    * This is needed by the regular step gradient descent and
    * Quasi Newton optimizers.
    */
-  DerivativeType m_PreviousGradient{};
+  DerivativeType                m_PreviousGradient{};
+  TInternalComputationValueType m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
 
 private:
 };
