@@ -148,7 +148,7 @@ protected:
                      const TransformBaseType *,
                      const FixedImageMasksContainerType,
                      const MovingImageMasksContainerType,
-                     MeasureType &) override;
+                     MeasureType &);
   virtual DisplacementFieldPointer
   BSplineSmoothDisplacementField(const DisplacementFieldType *,
                                  const ArrayType &,

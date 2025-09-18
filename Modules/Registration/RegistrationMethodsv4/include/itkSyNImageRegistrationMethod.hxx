@@ -21,6 +21,7 @@
 
 #include "itkComposeDisplacementFieldsImageFilter.h"
 #include "itkGaussianOperator.h"
+#include "itkGradientImageFilter.h"
 #include "itkImageMaskSpatialObject.h"
 #include "itkImportImageFilter.h"
 #include "itkInvertDisplacementFieldImageFilter.h"
@@ -170,6 +171,9 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
     MeasureType fixedMetricValue = 0.0;
     MeasureType movingMetricValue = 0.0;
 
+    DisplacementFieldPointer fixedGradientField = DisplacementFieldType::New();
+    DisplacementFieldPointer movingGradientField = DisplacementFieldType::New();
+
     DisplacementFieldPointer fixedToMiddleSmoothUpdateField = this->ComputeUpdateField(this->m_FixedSmoothImages,
                                                                                        this->m_FixedPointSets,
                                                                                        fixedComposite,
@@ -178,7 +182,8 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
                                                                                        movingComposite,
                                                                                        this->m_FixedImageMasks,
                                                                                        this->m_MovingImageMasks,
-                                                                                       movingMetricValue);
+                                                                                       movingMetricValue,
+                                                                                       fixedGradientField);
 
     DisplacementFieldPointer movingToMiddleSmoothUpdateField = this->ComputeUpdateField(this->m_MovingSmoothImages,
                                                                                         this->m_MovingPointSets,
@@ -188,7 +193,8 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
                                                                                         fixedComposite,
                                                                                         this->m_MovingImageMasks,
                                                                                         this->m_FixedImageMasks,
-                                                                                        fixedMetricValue);
+                                                                                        fixedMetricValue,
+                                                                                        movingGradientField);
 
     if (this->m_AverageMidPointGradients)
     {
@@ -245,6 +251,92 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
     convergenceMonitoring->AddEnergyValue(this->m_CurrentMetricValue);
     this->m_CurrentConvergenceValue = convergenceMonitoring->GetConvergenceValue();
 
+    RealType fixedGradNorm;
+    RealType fixedGradDiffNorm;
+    RealType fixedParamNorm;
+    RealType fixedParamDiffNorm;
+    if (this->m_PreviousFixedGradientField)
+    {
+      // Gradient difference
+      IteratorType itPrevGrad(this->s,
+                              this->m_PreviousFixedGradientField->GetRequestedRegion());
+      IteratorType itCurrGrad(fixedGradientField, fixedGradientField->GetRequestedRegion());
+
+      RealType gradNorm2 = 0.0;
+      RealType gradDiffNorm2 = 0.0;
+      for (itPrevGrad.GoToBegin(), itCurrGrad.GoToBegin(); !itPrevGrad.IsAtEnd(); ++itPrevGrad, ++itCurrGrad)
+      {
+        gradNorm2 += itCurrGrad.Get().GetSquaredNorm();
+        auto diff = itPrevGrad.Get() - itCurrGrad.Get();
+        gradDiffNorm2 += diff.GetSquaredNorm();
+      }
+      fixedGradNorm = std::sqrt(gradNorm2);
+      fixedGradDiffNorm = std::sqrt(gradDiffNorm2);
+
+      // Displacement difference
+      IteratorType itDiffParam(fixedToMiddleSmoothUpdateField, fixedToMiddleSmoothUpdateField->GetRequestedRegion());
+      IteratorType itTotalParam(fixedToMiddleSmoothTotalFieldTmp,
+                                fixedToMiddleSmoothTotalFieldTmp->GetRequestedRegion());
+
+      RealType paramNorm2 = 0.0;
+      RealType paramDiffNorm2 = 0.0;
+      for (itDiffParam.GoToBegin(), itTotalParam.GoToBegin(); !itTotalParam.IsAtEnd(); ++itTotalParam, ++itDiffParam)
+      {
+        paramNorm2 += itTotalParam.Get().GetSquaredNorm();
+        paramDiffNorm2 += itDiffParam.Get().GetSquaredNorm();
+      }
+      fixedParamNorm = std::sqrt(paramNorm2);
+      fixedParamDiffNorm = std::sqrt(paramDiffNorm2);
+    }
+
+    // --- MovingToMiddle ---
+    RealType movingGradNorm;
+    RealType movingGradDiffNorm;
+    RealType movingParamNorm;
+    RealType movingParamDiffNorm;
+    if (this->m_PreviousMovingGradientField)
+    {
+      IteratorType itPrevGrad(this->m_PreviousMovingGradientField,
+                              this->m_PreviousMovingGradientField->GetRequestedRegion());
+      IteratorType itCurrGrad(movingGradientField, movingGradientField->GetRequestedRegion());
+
+      RealType gradNorm2 = 0.0;
+      RealType gradDiffNorm2 = 0.0;
+      for (itPrevGrad.GoToBegin(), itCurrGrad.GoToBegin(); !itPrevGrad.IsAtEnd(); ++itPrevGrad, ++itCurrGrad)
+      {
+        gradNorm2 += itCurrGrad.Get().GetSquaredNorm();
+        auto diff = itPrevGrad.Get() - itCurrGrad.Get();
+        gradDiffNorm2 += diff.GetSquaredNorm();
+      }
+      movingGradNorm = std::sqrt(gradNorm2);
+      movingGradDiffNorm = std::sqrt(gradDiffNorm2);
+
+      // Displacement difference
+      IteratorType itTotalParam(movingToMiddleSmoothUpdateField, movingToMiddleSmoothUpdateField->GetRequestedRegion());
+      IteratorType itDiffParam(movingToMiddleSmoothTotalFieldTmp,
+                               movingToMiddleSmoothTotalFieldTmp->GetRequestedRegion());
+
+      RealType paramNorm2 = 0.0;
+      RealType paramDiffNorm2 = 0.0;
+      for (itDiffParam.GoToBegin(), itTotalParam.GoToBegin(); !itTotalParam.IsAtEnd(); ++itTotalParam, ++itDiffParam)
+      {
+        paramNorm2 += itTotalParam.Get().GetSquaredNorm();
+        paramDiffNorm2 += itDiffParam.Get().GetSquaredNorm();
+      }
+      movingParamNorm = std::sqrt(paramNorm2);
+      movingParamDiffNorm = std::sqrt(paramDiffNorm2);
+    }
+
+    if (this->m_PreviousFixedGradientField)
+    {
+      this->m_GradientTwoNorm = 0.5 * (fixedGradNorm + movingGradNorm);
+      this->m_ParametersTwoNorm = 0.5 * (fixedParamNorm + movingParamNorm);
+      this->m_LipschitzEstimate = (fixedGradDiffNorm + movingGradDiffNorm) / (fixedParamDiffNorm + movingParamDiffNorm);
+    }
+    this->m_PreviousFixedGradientField = fixedGradientField;
+    this->m_PreviousMovingGradientField = movingGradientField;
+
+
     if (this->m_CurrentConvergenceValue < this->m_ConvergenceThreshold)
     {
       this->m_IsConverged = true;
@@ -269,7 +361,8 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
     const TransformBaseType *           movingTransform,
     const FixedImageMasksContainerType  fixedImageMasks,
     const MovingImageMasksContainerType movingImageMasks,
-    MeasureType &                       value)
+    MeasureType &                       value,
+    DisplacementFieldPointer &          gradientField)
 {
   DisplacementFieldPointer metricGradientField = this->ComputeMetricGradientField(fixedImages,
                                                                                   fixedPointSets,
@@ -280,7 +373,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
                                                                                   fixedImageMasks,
                                                                                   movingImageMasks,
                                                                                   value);
-
+  gradientField = metricGradientField;
   DisplacementFieldPointer updateField =
     this->GaussianSmoothDisplacementField(metricGradientField, this->m_GaussianSmoothingVarianceForTheUpdateField);
 

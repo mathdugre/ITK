@@ -141,6 +141,7 @@ public:
 
   using DisplacementFieldTransformType = DisplacementFieldTransform<RealType, ImageDimension>;
   using DisplacementFieldTransformPointer = typename DisplacementFieldTransformType::Pointer;
+  using IteratorType = ImageRegionConstIterator<DisplacementFieldType>;
 
   using NumberOfIterationsArrayType = Array<SizeValueType>;
 
@@ -172,6 +173,15 @@ public:
    */
   itkSetMacro(AverageMidPointGradients, bool);
   itkGetConstMacro(AverageMidPointGradients, bool);
+
+  /** Get the current Lipschitz constant estimate */
+  itkGetConstMacro(LipschitzEstimate, RealType);
+
+  /** Get the current parameter norm */
+  itkGetConstMacro(ParametersTwoNorm, RealType);
+
+  /** Get the current gradient norm */
+  itkGetConstMacro(GradientTwoNorm, RealType);
 
   /**
    * Get/Set the Gaussian smoothing variance for the update field.
@@ -225,7 +235,8 @@ protected:
                      const TransformBaseType *,
                      const FixedImageMasksContainerType,
                      const MovingImageMasksContainerType,
-                     MeasureType &);
+                     MeasureType &,
+                     DisplacementFieldPointer &);
   virtual DisplacementFieldPointer
   ComputeMetricGradientField(const FixedImagesContainerType,
                              const PointSetsContainerType,
@@ -244,6 +255,18 @@ protected:
   virtual DisplacementFieldPointer
   InvertDisplacementField(const DisplacementFieldType *, const DisplacementFieldType * = nullptr);
 
+  // /** Estimate the Lipschitz constant of the gradient field */
+  // virtual RealType
+  // EstimateLipschitzConstant(const DisplacementFieldType * gradientField);
+
+  // /** Compute the norm of the displacement field parameters */
+  // virtual RealType
+  // ComputeParameterNorm(const DisplacementFieldType * displacementField);
+
+  // /** Compute the norm of the gradient field */
+  // virtual RealType
+  // ComputeGradientNorm(const DisplacementFieldType * gradientField);
+
   RealType m_LearningRate{ 0.25 };
 
   OutputTransformPointer m_MovingToMiddleTransform{ nullptr };
@@ -255,6 +278,19 @@ protected:
   NumberOfIterationsArrayType m_NumberOfIterationsPerLevel{};
   bool                        m_DownsampleImagesForMetricDerivatives{ true };
   bool                        m_AverageMidPointGradients{ false };
+
+  /** Store Lipschitz constants for monitoring */
+  RealType m_LipschitzEstimate{ 0.0 };
+
+  /** Store parameter and gradient norms for monitoring */
+  RealType                 m_ParametersTwoNorm{ 0.0 };
+  // DisplacementFieldPointer m_PreviousFixedDisplacementField{ nullptr };
+  // DisplacementFieldPointer m_PreviousMovingDisplacementField{ nullptr };
+
+  RealType                 m_GradientTwoNorm{ 0.0 };
+  DisplacementFieldPointer m_PreviousFixedGradientField{ nullptr };
+  DisplacementFieldPointer m_PreviousMovingGradientField{ nullptr };
+
 
 private:
   RealType m_GaussianSmoothingVarianceForTheUpdateField{ 3.0 };
