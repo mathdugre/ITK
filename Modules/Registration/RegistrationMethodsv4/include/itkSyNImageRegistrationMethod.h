@@ -254,6 +254,10 @@ protected:
   GaussianSmoothDisplacementField(const DisplacementFieldType *, const RealType);
   virtual DisplacementFieldPointer
   InvertDisplacementField(const DisplacementFieldType *, const DisplacementFieldType * = nullptr);
+  virtual RealType
+  ComputeFieldL2Norm(const DisplacementFieldType * field);
+  virtual DisplacementFieldPointer
+  SubtractField(const DisplacementFieldType * field1, const DisplacementFieldType * field2);
 
   // /** Estimate the Lipschitz constant of the gradient field */
   // virtual RealType
@@ -283,13 +287,15 @@ protected:
   RealType m_LipschitzEstimate{ 0.0 };
 
   /** Store parameter and gradient norms for monitoring */
-  RealType                 m_ParametersTwoNorm{ 0.0 };
+  RealType m_ParametersTwoNorm{ 0.0 };
   // DisplacementFieldPointer m_PreviousFixedDisplacementField{ nullptr };
   // DisplacementFieldPointer m_PreviousMovingDisplacementField{ nullptr };
 
   RealType                 m_GradientTwoNorm{ 0.0 };
-  DisplacementFieldPointer m_PreviousFixedGradientField{ nullptr };
-  DisplacementFieldPointer m_PreviousMovingGradientField{ nullptr };
+  DisplacementFieldPointer m_PreviousFixedToMiddleSmoothUpdateField{ nullptr };
+  DisplacementFieldPointer m_PreviousFixedToMiddleSmoothTotalField{ nullptr };
+  DisplacementFieldPointer m_PreviousMovingToMiddleSmoothUpdateField{ nullptr };
+  DisplacementFieldPointer m_PreviousMovingToMiddleSmoothTotalField{ nullptr };
 
 
 private:
