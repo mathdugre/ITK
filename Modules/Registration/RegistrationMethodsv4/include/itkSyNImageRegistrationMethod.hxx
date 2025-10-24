@@ -267,6 +267,10 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
       RealType fixedParamDiffNorm = this->ComputeFieldL2Norm(
         this->SubtractField(this->m_PreviousFixedToMiddleSmoothTotalField, fixedToMiddleSmoothTotalField));
 
+      this->m_FixedLipschitzEstimate = fixedGradDiffNorm / fixedParamDiffNorm;
+      this->m_FixedParametersTwoNorm = fixedParamNorm * fixedParamNorm;
+      this->m_FixedGradientTwoNorm = fixedGradNorm * fixedGradNorm;
+
       // --- MovingToMiddle ---
       // Gradient difference
       RealType movingGradNorm = this->ComputeFieldL2Norm(movingToMiddleSmoothUpdateField);
@@ -277,10 +281,9 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
       RealType movingParamDiffNorm = this->ComputeFieldL2Norm(
         this->SubtractField(this->m_PreviousMovingToMiddleSmoothTotalField, movingToMiddleSmoothTotalField));
 
-      this->m_GradientTwoNorm = std::sqrt(0.5 * (fixedGradNorm * fixedGradNorm + movingGradNorm * movingGradNorm));
-      this->m_ParametersTwoNorm = std::sqrt(0.5 * (fixedParamNorm * fixedParamNorm + movingParamNorm * movingParamNorm));
-      this->m_LipschitzEstimate =
-        std::max((fixedGradDiffNorm / fixedParamDiffNorm), (movingGradDiffNorm / movingParamDiffNorm));
+      this->m_MovingLipschitzEstimate = movingGradDiffNorm / movingParamDiffNorm;
+      this->m_MovingParametersTwoNorm = movingParamNorm * movingParamNorm;
+      this->m_MovingGradientTwoNorm = movingGradNorm * movingGradNorm;
     }
 
     this->m_PreviousFixedToMiddleSmoothUpdateField = fixedToMiddleSmoothUpdateField;   // gradient

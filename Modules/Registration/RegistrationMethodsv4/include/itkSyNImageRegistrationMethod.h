@@ -175,13 +175,16 @@ public:
   itkGetConstMacro(AverageMidPointGradients, bool);
 
   /** Get the current Lipschitz constant estimate */
-  itkGetConstMacro(LipschitzEstimate, RealType);
+  itkGetConstMacro(MovingLipschitzEstimate, RealType);
+  itkGetConstMacro(FixedLipschitzEstimate, RealType);
 
   /** Get the current parameter norm */
-  itkGetConstMacro(ParametersTwoNorm, RealType);
+  itkGetConstMacro(MovingParametersTwoNorm, RealType);
+  itkGetConstMacro(FixedParametersTwoNorm, RealType);
 
   /** Get the current gradient norm */
-  itkGetConstMacro(GradientTwoNorm, RealType);
+  itkGetConstMacro(MovingGradientTwoNorm, RealType);
+  itkGetConstMacro(FixedGradientTwoNorm, RealType);
 
   /**
    * Get/Set the Gaussian smoothing variance for the update field.
@@ -284,14 +287,17 @@ protected:
   bool                        m_AverageMidPointGradients{ false };
 
   /** Store Lipschitz constants for monitoring */
-  RealType m_LipschitzEstimate{ 0.0 };
+  RealType m_MovingLipschitzEstimate{ 0.0 };
+  RealType m_FixedLipschitzEstimate{ 0.0 };
 
   /** Store parameter and gradient norms for monitoring */
-  RealType m_ParametersTwoNorm{ 0.0 };
+  RealType m_MovingParametersTwoNorm{ 0.0 };
+  RealType m_FixedParametersTwoNorm{ 0.0 };
   // DisplacementFieldPointer m_PreviousFixedDisplacementField{ nullptr };
   // DisplacementFieldPointer m_PreviousMovingDisplacementField{ nullptr };
 
-  RealType                 m_GradientTwoNorm{ 0.0 };
+  RealType                 m_MovingGradientTwoNorm{ 0.0 };
+  RealType                 m_FixedGradientTwoNorm{ 0.0 };
   DisplacementFieldPointer m_PreviousFixedToMiddleSmoothUpdateField{ nullptr };
   DisplacementFieldPointer m_PreviousFixedToMiddleSmoothTotalField{ nullptr };
   DisplacementFieldPointer m_PreviousMovingToMiddleSmoothUpdateField{ nullptr };
