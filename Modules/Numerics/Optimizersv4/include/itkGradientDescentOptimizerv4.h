@@ -201,23 +201,6 @@ public:
   virtual void
   EstimateLearningRate();
 
-  // /** Get the estimated Lipschitz constant */
-  // TInternalComputationValueType
-  // GetLipschitzEstimate() const override
-  // {
-  //   return m_LipschitzEstimate;
-  // }
-  // TInternalComputationValueType
-  // GetParametersTwoNorm() const override
-  // {
-  //   return this->m_Metric->GetParameters().two_norm();
-  // }
-  // TInternalComputationValueType
-  // GetGradientTwoNorm() const override
-  // {
-  //   return this->m_Gradient.two_norm();
-  // }
-
 
   protected
   :
@@ -260,7 +243,6 @@ public:
    * Quasi Newton optimizers.
    */
   DerivativeType                m_PreviousGradient{};
-  // TInternalComputationValueType m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
 
 private:
 };

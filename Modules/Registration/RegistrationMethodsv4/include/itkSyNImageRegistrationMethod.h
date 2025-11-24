@@ -22,6 +22,7 @@
 
 #include "itkImageMaskSpatialObject.h"
 #include "itkDisplacementFieldTransform.h"
+#include "itkRollingAverage.h"
 
 namespace itk
 {
@@ -174,6 +175,27 @@ public:
   itkSetMacro(AverageMidPointGradients, bool);
   itkGetConstMacro(AverageMidPointGradients, bool);
 
+  /** Get the current VPREC Precision */
+  unsigned int
+  GetVPRECPrecision() const
+  {
+    const static std::map<float, unsigned int> precision_map = {
+      { 8.0f, 8 }, { 11.0f, 11 }, { 16.0f, 16 }, { 24.0f, 24 }, { std::numeric_limits<float>::max(), 53 }
+    };
+    // Find the first element whose key (max_estimate_for_range) is
+    // NOT less than (i.e., is greater than or equal to) m_PminEstimate.
+    auto it = precision_map.lower_bound(m_PminEstimate);
+    if (it != precision_map.end())
+    {
+      return it->second;
+    }
+
+    // Fallback
+    return 53;
+  }
+  itkGetConstMacro(PminEstimate, RealType);
+  itkGetConstMacro(RollingAveragePminEstimate, double);
+
   /** Get the current Lipschitz constant estimate */
   itkGetConstMacro(MovingLipschitzEstimate, RealType);
   itkGetConstMacro(FixedLipschitzEstimate, RealType);
@@ -285,6 +307,11 @@ protected:
   NumberOfIterationsArrayType m_NumberOfIterationsPerLevel{};
   bool                        m_DownsampleImagesForMetricDerivatives{ true };
   bool                        m_AverageMidPointGradients{ false };
+
+  /** Sotre the current VPREC Precision */
+  RealType                        m_PminEstimate{ 0.0f };
+  RollingAverageCircularBuffer<5> m_RollingAveragePminEstimator;
+  double                          m_RollingAveragePminEstimate{ 0.0 };
 
   /** Store Lipschitz constants for monitoring */
   RealType m_MovingLipschitzEstimate{ 0.0 };

@@ -284,6 +284,26 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
       this->m_MovingLipschitzEstimate = movingGradDiffNorm / movingParamDiffNorm;
       this->m_MovingParametersTwoNorm = movingParamNorm * movingParamNorm;
       this->m_MovingGradientTwoNorm = movingGradNorm * movingGradNorm;
+
+      // --- VPREC AMP ---
+      // Compute pmin estimate
+      const double CONSTANT_FACTOR = 4.0 + 3.0 * std::sqrt(2.0);
+
+      double f_arg = (CONSTANT_FACTOR * this->m_FixedLipschitzEstimate * this->m_FixedParametersTwoNorm) /
+                     this->m_FixedGradientTwoNorm;
+      double m_arg = (CONSTANT_FACTOR * this->m_MovingLipschitzEstimate * this->m_MovingParametersTwoNorm) /
+                     this->m_MovingGradientTwoNorm;
+      double avg_arg = 0.5 * (f_arg + m_arg);
+
+      // Ensure avg_arg is in log2 domain
+      double new_pmin_estimate = (avg_arg <= 0.0) ? -std::numeric_limits<double>::infinity() : std::log2(avg_arg);
+
+      // Store current Pmin estimate and update rolling average
+      this->m_PminEstimate = new_pmin_estimate;
+      this->m_RollingAveragePminEstimate = this->m_RollingAveragePminEstimator.update(new_pmin_estimate);
+      // Assign new VPREC precision
+      unsigned int vprec_precision = this->GetVPRECPrecision();
+      // TODO: Update VPREC precision
     }
 
     this->m_PreviousFixedToMiddleSmoothUpdateField = fixedToMiddleSmoothUpdateField;   // gradient

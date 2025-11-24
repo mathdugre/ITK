@@ -99,6 +99,22 @@ ConjugateGradientLineSearchOptimizerv4Template<TInternalComputationValueType>::A
     TInternalComputationValueType paramNorm = paramDiff.two_norm();
 
     this->m_LipschitzEstimate = gradNorm / paramNorm;
+
+    // --- VPREC AMP ---
+    // Compute pmin estimate
+    const double CONSTANT_FACTOR = 4.0 + 3.0 * std::sqrt(2.0);
+    double       arg =
+      (CONSTANT_FACTOR * this->m_LipschitzEstimate * this->GetParametersTwoNorm()) / this->GetGradientTwoNorm();
+
+    // Ensure arg is in log2 domain
+    double new_pmin_estimate = (arg <= 0.0) ? -std::numeric_limits<double>::infinity() : std::log2(arg);
+
+    // Store current Pmin estimate and update rolling average
+    this->m_PminEstimate = new_pmin_estimate;
+    this->m_RollingAveragePminEstimate = this->m_RollingAveragePminEstimator.update(new_pmin_estimate);
+    // Assign new VPREC precision
+    unsigned int vprec_precision = this->GetVPRECPrecision();
+    // TODO: Update VPREC precision
   }
   catch (const ExceptionObject &)
   {

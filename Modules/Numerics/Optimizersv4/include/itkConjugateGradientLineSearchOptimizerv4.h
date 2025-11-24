@@ -21,6 +21,7 @@
 #include "itkGradientDescentLineSearchOptimizerv4.h"
 #include "itkOptimizerParameterScalesEstimator.h"
 #include "itkWindowConvergenceMonitoringFunction.h"
+#include "itkRollingAverage.h"
 
 namespace itk
 {
@@ -78,6 +79,36 @@ public:
   void
   StartOptimization(bool doOnlyInitialization = false) override;
 
+  unsigned int
+  GetVPRECPrecision() const override
+  {
+    const static std::map<float, unsigned int> precision_map = {
+      { 8.0f, 8 }, { 11.0f, 11 }, { 24.0f, 24 }, { 32.0f, 32 }, { std::numeric_limits<float>::max(), 64 }
+    };
+    // Find the first element whose key (max_estimate_for_range) is
+    // NOT less than (i.e., is greater than or equal to) m_PminEstimate.
+    auto it = precision_map.lower_bound(m_PminEstimate);
+    if (it != precision_map.end())
+    {
+      return it->second;
+    }
+
+    // Fallback, though with the max() entry, this should be unreachable
+    return 64;
+  }
+
+  TInternalComputationValueType
+  GetPminEstimate() const override
+  {
+    return m_PminEstimate;
+  }
+
+  double
+  GetRollingAveragePminEstimate() const override
+  {
+    return m_RollingAveragePminEstimate;
+  }
+
   /** Get the estimated Lipschitz constant */
   TInternalComputationValueType
   GetLipschitzEstimate() const override
@@ -111,9 +142,12 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
-  DerivativeType                m_LastGradient{};
-  DerivativeType                m_ConjugateGradient{};
-  TInternalComputationValueType m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
+  DerivativeType                  m_LastGradient{};
+  DerivativeType                  m_ConjugateGradient{};
+  TInternalComputationValueType   m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
+  TInternalComputationValueType   m_PminEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
+  RollingAverageCircularBuffer<5> m_RollingAveragePminEstimator;
+  double                          m_RollingAveragePminEstimate{ 0.0 };
 };
 
 /** This helps to meet backward compatibility */

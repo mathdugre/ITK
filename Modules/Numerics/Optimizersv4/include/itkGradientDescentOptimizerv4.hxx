@@ -172,20 +172,8 @@ GradientDescentOptimizerv4Template<TInternalComputationValueType>::AdvanceOneSte
 
   try
   {
-    // vnl_vector<TInternalComputationValueType> LastParameters = (this->m_Metric->GetParameters());
-
     /* Pass gradient to transform and let it do its own updating. */
     this->m_Metric->UpdateTransformParameters(this->m_Gradient);
-
-    // /* Estimate Lipschitz constant */
-    // vnl_vector<TInternalComputationValueType> gradDiff = this->m_Gradient - this->m_PreviousGradient;
-    // vnl_vector<TInternalComputationValueType> currentParams = (this->m_Metric->GetParameters());
-    // vnl_vector<TInternalComputationValueType> paramDiff = currentParams - LastParameters;
-
-    // TInternalComputationValueType gradNorm = gradDiff.two_norm();
-    // TInternalComputationValueType paramNorm = paramDiff.two_norm();
-
-    // this->m_LipschitzEstimate = gradNorm / paramNorm;
   }
   catch (const ExceptionObject &)
   {

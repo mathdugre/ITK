@@ -175,6 +175,24 @@ public:
     this->m_Scales = scales;
   }
 
+  virtual unsigned int
+  GetVPRECPrecision() const
+  {
+    itkExceptionMacro("GetVPRECPrecision() not implemented for this optimizer.");
+  }
+
+  virtual TInternalComputationValueType
+  GetPminEstimate() const
+  {
+    itkExceptionMacro("GetPminEstimate() not implemented for this optimizer.");
+  }
+
+  virtual double
+  GetRollingAveragePminEstimate() const
+  {
+    itkExceptionMacro("GetRollingAveragePminEstimate() not implemented for this optimizer.");
+  }
+
   virtual TInternalComputationValueType
   GetLipschitzEstimate() const
   {
