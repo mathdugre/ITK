@@ -1,6 +1,6 @@
-// itkRollingAverage.h
-#ifndef itkRollingAverage_h
-#define itkRollingAverage_h
+// itkRollingMetrics.h
+#ifndef itkRollingMetrics_h
+#define itkRollingMetrics_h
 
 namespace itk
 {
@@ -12,13 +12,13 @@ namespace itk
  * @tparam VWindowSize The fixed size of the rolling window.
  */
 template <unsigned int N>
-class RollingAverageCircularBuffer
+class RollingCircularBuffer
 {
 public:
   // Ensure the window size is positive at compile time
   static_assert(N > 0, "Window size (N) must be greater than 0.");
 
-  RollingAverageCircularBuffer()
+  RollingCircularBuffer()
     : window_index_(0)
     , current_sum_(0.0)
     , count_(0)
@@ -50,9 +50,26 @@ public:
     {
       count_++;
     }
+  }
 
-    // 6. Calculate and return the average.
+  double
+  getAverage() const
+  {
     return current_sum_ / static_cast<double>(count_);
+  }
+
+  double
+  getMax() const
+  {
+    double max_value = window_data_[0];
+    for (unsigned int i = 1; i < count_; ++i)
+    {
+      if (window_data_[i] > max_value)
+      {
+        max_value = window_data_[i];
+      }
+    }
+    return max_value;
   }
 
 private:

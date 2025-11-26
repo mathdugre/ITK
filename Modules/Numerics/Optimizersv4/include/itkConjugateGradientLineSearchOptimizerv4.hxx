@@ -109,9 +109,11 @@ ConjugateGradientLineSearchOptimizerv4Template<TInternalComputationValueType>::A
     // Ensure arg is in log2 domain
     double new_pmin_estimate = (arg <= 0.0) ? -std::numeric_limits<double>::infinity() : std::log2(arg);
 
-    // Store current Pmin estimate and update rolling average
+    // Store current Pmin estimate and update rolling metrics
     this->m_PminEstimate = new_pmin_estimate;
-    this->m_RollingAveragePminEstimate = this->m_RollingAveragePminEstimator.update(new_pmin_estimate);
+    this->m_RollingAveragePminEstimator.update(new_pmin_estimate);
+    this->m_RollingAveragePminEstimate = this->m_RollingAveragePminEstimator.getAverage();
+    this->m_RollingMaxPminEstimate = this->m_RollingAveragePminEstimator.getMax();
     // Assign new VPREC precision
     unsigned int vprec_precision = this->GetVPRECPrecision();
     // TODO: Update VPREC precision

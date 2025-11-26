@@ -193,6 +193,12 @@ public:
     itkExceptionMacro("GetRollingAveragePminEstimate() not implemented for this optimizer.");
   }
 
+  virtual double
+  GetRollingMaxPminEstimate() const
+  {
+    itkExceptionMacro("GetRollingMaxPminEstimate() not implemented for this optimizer.");
+  }
+
   virtual TInternalComputationValueType
   GetLipschitzEstimate() const
   {

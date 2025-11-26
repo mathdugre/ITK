@@ -21,7 +21,7 @@
 #include "itkGradientDescentLineSearchOptimizerv4.h"
 #include "itkOptimizerParameterScalesEstimator.h"
 #include "itkWindowConvergenceMonitoringFunction.h"
-#include "itkRollingAverage.h"
+#include "itkRollingMetrics.h"
 
 namespace itk
 {
@@ -109,6 +109,12 @@ public:
     return m_RollingAveragePminEstimate;
   }
 
+  double
+  GetRollingMaxPminEstimate() const override
+  {
+    return m_RollingMaxPminEstimate;
+  }
+
   /** Get the estimated Lipschitz constant */
   TInternalComputationValueType
   GetLipschitzEstimate() const override
@@ -146,8 +152,9 @@ private:
   DerivativeType                  m_ConjugateGradient{};
   TInternalComputationValueType   m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
   TInternalComputationValueType   m_PminEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
-  RollingAverageCircularBuffer<5> m_RollingAveragePminEstimator;
+  RollingCircularBuffer<5>        m_RollingAveragePminEstimator;
   double                          m_RollingAveragePminEstimate{ 0.0 };
+  double                          m_RollingMaxPminEstimate{ 0.0 };
 };
 
 /** This helps to meet backward compatibility */

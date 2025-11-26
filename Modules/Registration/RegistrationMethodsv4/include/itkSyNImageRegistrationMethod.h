@@ -22,7 +22,7 @@
 
 #include "itkImageMaskSpatialObject.h"
 #include "itkDisplacementFieldTransform.h"
-#include "itkRollingAverage.h"
+#include "itkRollingMetrics.h"
 
 namespace itk
 {
@@ -195,6 +195,7 @@ public:
   }
   itkGetConstMacro(PminEstimate, RealType);
   itkGetConstMacro(RollingAveragePminEstimate, double);
+  itkGetConstMacro(RollingMaxPminEstimate, double);
 
   /** Get the current Lipschitz constant estimate */
   itkGetConstMacro(MovingLipschitzEstimate, RealType);
@@ -310,8 +311,9 @@ protected:
 
   /** Sotre the current VPREC Precision */
   RealType                        m_PminEstimate{ 0.0f };
-  RollingAverageCircularBuffer<5> m_RollingAveragePminEstimator;
+  RollingCircularBuffer<5>        m_RollingAveragePminEstimator;
   double                          m_RollingAveragePminEstimate{ 0.0 };
+  double                          m_RollingMaxPminEstimate{ 0.0 };
 
   /** Store Lipschitz constants for monitoring */
   RealType m_MovingLipschitzEstimate{ 0.0 };
