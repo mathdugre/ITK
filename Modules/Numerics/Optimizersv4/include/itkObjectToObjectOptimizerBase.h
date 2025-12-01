@@ -175,6 +175,12 @@ public:
     this->m_Scales = scales;
   }
 
+  virtual void
+  UpdatePrecision(double estimate)
+  {
+    itkExceptionMacro("UpdatePrecision() not implemented for this optimizer.");
+  }
+
   virtual unsigned int
   GetVPRECPrecision() const
   {

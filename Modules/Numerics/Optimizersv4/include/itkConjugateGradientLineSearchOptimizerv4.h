@@ -79,22 +79,30 @@ public:
   void
   StartOptimization(bool doOnlyInitialization = false) override;
 
-  unsigned int
-  GetVPRECPrecision() const override
+  void
+  UpdatePrecision(double estimate) override
   {
     const static std::map<float, unsigned int> precision_map = {
       { 8.0f, 8 }, { 11.0f, 11 }, { 24.0f, 24 }, { 32.0f, 32 }, { std::numeric_limits<float>::max(), 64 }
     };
     // Find the first element whose key (max_estimate_for_range) is
-    // NOT less than (i.e., is greater than or equal to) m_PminEstimate.
-    auto it = precision_map.lower_bound(m_PminEstimate);
+    // NOT less than (i.e., is greater than or equal to) estimate.
+    auto it = precision_map.lower_bound(estimate);
     if (it != precision_map.end())
     {
-      return it->second;
+      m_VPRECPrecision = it->second;
     }
+    else
+    {
+      // Fallback, though with the max() entry, this should be unreachable
+      m_VPRECPrecision = 53;
+    }
+  }
 
-    // Fallback, though with the max() entry, this should be unreachable
-    return 64;
+  unsigned int
+  GetVPRECPrecision() const override
+  {
+    return m_VPRECPrecision;
   }
 
   TInternalComputationValueType
@@ -148,13 +156,14 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
-  DerivativeType                  m_LastGradient{};
-  DerivativeType                  m_ConjugateGradient{};
-  TInternalComputationValueType   m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
-  TInternalComputationValueType   m_PminEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
-  RollingCircularBuffer<5>        m_RollingAveragePminEstimator;
-  double                          m_RollingAveragePminEstimate{ 0.0 };
-  double                          m_RollingMaxPminEstimate{ 0.0 };
+  DerivativeType                m_LastGradient{};
+  DerivativeType                m_ConjugateGradient{};
+  TInternalComputationValueType m_LipschitzEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
+  TInternalComputationValueType m_PminEstimate = NumericTraits<TInternalComputationValueType>::ZeroValue();
+  RollingCircularBuffer<5>      m_RollingAveragePminEstimator;
+  double                        m_RollingAveragePminEstimate{ 0.0 };
+  double                        m_RollingMaxPminEstimate{ 0.0 };
+  unsigned int                  m_VPRECPrecision{ 53 };
 };
 
 /** This helps to meet backward compatibility */

@@ -18,6 +18,8 @@
 #ifndef itkConjugateGradientLineSearchOptimizerv4_hxx
 #define itkConjugateGradientLineSearchOptimizerv4_hxx
 
+#include <interflop/interflop.h>
+
 namespace itk
 {
 
@@ -114,9 +116,14 @@ ConjugateGradientLineSearchOptimizerv4Template<TInternalComputationValueType>::A
     this->m_RollingAveragePminEstimator.update(new_pmin_estimate);
     this->m_RollingAveragePminEstimate = this->m_RollingAveragePminEstimator.getAverage();
     this->m_RollingMaxPminEstimate = this->m_RollingAveragePminEstimator.getMax();
+
     // Assign new VPREC precision
+    this->UpdatePrecision(this->m_RollingAveragePminEstimate);
     unsigned int vprec_precision = this->GetVPRECPrecision();
-    // TODO: Update VPREC precision
+    interflop_call(INTERFLOP_SET_PRECISION_BINARY32, vprec_precision);
+    interflop_call(INTERFLOP_SET_PRECISION_BINARY64, vprec_precision);
+    interflop_call(INTERFLOP_SET_RANGE_BINARY32, 8);
+    interflop_call(INTERFLOP_SET_RANGE_BINARY64, 8);
   }
   catch (const ExceptionObject &)
   {

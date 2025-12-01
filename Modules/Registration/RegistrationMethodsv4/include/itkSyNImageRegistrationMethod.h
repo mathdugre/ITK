@@ -176,26 +176,29 @@ public:
   itkGetConstMacro(AverageMidPointGradients, bool);
 
   /** Get the current VPREC Precision */
-  unsigned int
-  GetVPRECPrecision() const
+  void
+  UpdatePrecision(double estimate)
   {
     const static std::map<float, unsigned int> precision_map = {
       { 8.0f, 8 }, { 11.0f, 11 }, { 16.0f, 16 }, { 24.0f, 24 }, { std::numeric_limits<float>::max(), 53 }
     };
     // Find the first element whose key (max_estimate_for_range) is
-    // NOT less than (i.e., is greater than or equal to) m_PminEstimate.
-    auto it = precision_map.lower_bound(m_PminEstimate);
+    // NOT less than (i.e., is greater than or equal to) estimate.
+    auto it = precision_map.lower_bound(estimate);
     if (it != precision_map.end())
     {
-      return it->second;
+      m_VPRECPrecision = it->second;
     }
-
-    // Fallback
-    return 53;
+    else
+    {
+      // Fallback, though with the max() entry, this should be unreachable
+      m_VPRECPrecision = 53;
+    }
   }
   itkGetConstMacro(PminEstimate, RealType);
   itkGetConstMacro(RollingAveragePminEstimate, double);
   itkGetConstMacro(RollingMaxPminEstimate, double);
+  itkGetConstMacro(VPRECPrecision, unsigned int);
 
   /** Get the current Lipschitz constant estimate */
   itkGetConstMacro(MovingLipschitzEstimate, RealType);
@@ -310,10 +313,11 @@ protected:
   bool                        m_AverageMidPointGradients{ false };
 
   /** Sotre the current VPREC Precision */
-  RealType                        m_PminEstimate{ 0.0f };
-  RollingCircularBuffer<5>        m_RollingAveragePminEstimator;
-  double                          m_RollingAveragePminEstimate{ 0.0 };
-  double                          m_RollingMaxPminEstimate{ 0.0 };
+  RealType                 m_PminEstimate{ 0.0f };
+  RollingCircularBuffer<5> m_RollingAveragePminEstimator;
+  double                   m_RollingAveragePminEstimate{ 0.0 };
+  double                   m_RollingMaxPminEstimate{ 0.0 };
+  unsigned int             m_VPRECPrecision{ 53 };
 
   /** Store Lipschitz constants for monitoring */
   RealType m_MovingLipschitzEstimate{ 0.0 };
