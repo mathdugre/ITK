@@ -27,9 +27,8 @@ public:
   /**
    * @brief Adds a new data point and updates the running average.
    * @param newValue The new data point to incorporate.
-   * @return The current rolling average.
    */
-  double
+  void
   update(double newValue)
   {
     // 1. Get the value being replaced (the oldest value).
@@ -55,6 +54,10 @@ public:
   double
   getAverage() const
   {
+    if (count_ == 0)
+    {
+      return 0.0;
+    }
     return current_sum_ / static_cast<double>(count_);
   }
 
