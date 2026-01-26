@@ -163,7 +163,7 @@ private:
   RollingCircularBuffer<5>      m_RollingAveragePminEstimator;
   double                        m_RollingAveragePminEstimate{ 0.0 };
   double                        m_RollingMaxPminEstimate{ 0.0 };
-  unsigned int                  m_VPRECPrecision{ 53 };
+  unsigned int                  m_VPRECPrecision{ 32 };
 };
 
 /** This helps to meet backward compatibility */

@@ -33,7 +33,7 @@
 #include "itkStatisticsImageFilter.h"
 #include "itkSubtractImageFilter.h"
 
-#include <interflop/interflop.h>
+// #include <interflop/interflop.h>
 
 namespace itk
 {
@@ -308,11 +308,11 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
 
       // Assign new VPREC precision
       this->UpdatePrecision(this->m_RollingAveragePminEstimate);
-      unsigned int vprec_precision = this->GetVPRECPrecision();
-      interflop_call(INTERFLOP_SET_PRECISION_BINARY32, vprec_precision);
-      interflop_call(INTERFLOP_SET_PRECISION_BINARY64, vprec_precision);
-      interflop_call(INTERFLOP_SET_RANGE_BINARY32, 8);
-      interflop_call(INTERFLOP_SET_RANGE_BINARY64, 8);
+      unsigned int vprec_precision = this->m_VPRECPrecision;
+      // interflop_call(INTERFLOP_SET_PRECISION_BINARY32, vprec_precision);
+      // interflop_call(INTERFLOP_SET_PRECISION_BINARY64, vprec_precision);
+      // interflop_call(INTERFLOP_SET_RANGE_BINARY32, 8);
+      // interflop_call(INTERFLOP_SET_RANGE_BINARY64, 8);
     }
 
     this->m_PreviousFixedToMiddleSmoothUpdateField = fixedToMiddleSmoothUpdateField;   // gradient
