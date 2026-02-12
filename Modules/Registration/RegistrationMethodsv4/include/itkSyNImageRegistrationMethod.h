@@ -180,7 +180,7 @@ public:
   UpdatePrecision(double estimate)
   {
     const static std::map<float, unsigned int> precision_map = {
-      { 8.0f, 8 }, { 11.0f, 11 }, { 16.0f, 16 }, { 24.0f, 24 }, { std::numeric_limits<float>::max(), 53 }
+      { 7.0f, 7 }, { 10.0f, 10 }, { 16.0f, 16 }, { 23.0f, 23 }, { std::numeric_limits<float>::max(), 53 }
     };
     // Find the first element whose key (max_estimate_for_range) is
     // NOT less than (i.e., is greater than or equal to) estimate.

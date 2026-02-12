@@ -83,7 +83,7 @@ public:
   UpdatePrecision(double estimate) override
   {
     const static std::map<float, unsigned int> precision_map = {
-      { 8.0f, 8 }, { 11.0f, 11 }, { 24.0f, 24 }, { 32.0f, 32 }, { std::numeric_limits<float>::max(), 64 }
+      { 7.0f, 7 }, { 10.0f, 10 }, { 16.0f, 16 }, { 23.0f, 23 }, { std::numeric_limits<float>::max(), 53 }
     };
     // Find the first element whose key (max_estimate_for_range) is
     // NOT less than (i.e., is greater than or equal to) estimate.
@@ -163,7 +163,7 @@ private:
   RollingCircularBuffer<5>      m_RollingAveragePminEstimator;
   double                        m_RollingAveragePminEstimate{ 0.0 };
   double                        m_RollingMaxPminEstimate{ 0.0 };
-  unsigned int                  m_VPRECPrecision{ 32 };
+  unsigned int                  m_VPRECPrecision{ 23 };
 };
 
 /** This helps to meet backward compatibility */
