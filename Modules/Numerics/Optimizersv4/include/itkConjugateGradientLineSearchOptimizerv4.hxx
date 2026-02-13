@@ -18,7 +18,7 @@
 #ifndef itkConjugateGradientLineSearchOptimizerv4_hxx
 #define itkConjugateGradientLineSearchOptimizerv4_hxx
 
-// #include <interflop/interflop.h>
+#include <interflop/interflop.h>
 
 namespace itk
 {
